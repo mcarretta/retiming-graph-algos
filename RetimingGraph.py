@@ -34,17 +34,6 @@ class RetimingGraph:
             self.graph.add_node(nodes[node_index], delay=delays[node_index])
         self.graph.add_weighted_edges_from(weighted_edges)
 
-    def compute_path_weight(self, path):
-        path_weight = 0
-        for i in range(1, len(path)):
-            path_weight += self.graph.get_edge_data(path[i - 1], path[i])["weight"]
-        return path_weight
-
-    def compute_path_sum_of_delays(self, path):
-        path_delay = 0
-        for i in range(len(path)):
-            path_delay += self.graph.get_node_data(path[i - 1], path[i])["weight"]
-        return path_delay
 
     @staticmethod
     def draw_graph(graph):
@@ -152,14 +141,23 @@ class RetimingGraph:
 
 
     def check_legal_retiming(self, desired_clock, w_mat, d_mat):
-        retiming = nx.single_source_bellman_ford_path_length()
-        G_r = self.compute_retimed_graph(retiming)
-        if self.cp_algorithm(G_r) > desired_clock:
-            print("No feasible retiming exists")
+        G_r = nx.DiGraph()
+        w = nx.get_edge_attributes(self.graph, "weight")
+        edge_list_r = []
+        for u, v in self.graph.edges:
+            edge_list_r.append((v, u, w[u,v]))
+        for u, v in list(np.argwhere(d_mat > desired_clock)):
+            edge_list_r.append((v, u, w_mat[u, v] - 1))
+        G_r.add_weighted_edges_from(edge_list_r)
+
+        try:
+            retiming = nx.single_source_bellman_ford_path_length(G_r, 0, "weight")
+        except nx.exception.NetworkXUnbounded:
+            print(f"No feasible retiming exists for clock period {desired_clock}")
             return None
-        else:
-            print("Feasible retiming exists", retiming)
-            return retiming
+
+        print(f"Feasible retiming exists with clock period {desired_clock}", retiming)
+        return retiming
 
     def _opt1_binary_search(self, vectorized_d, w_mat, d_mat):
         left, right = 0, len(vectorized_d) - 1
@@ -173,7 +171,7 @@ class RetimingGraph:
         print(f"The minimum achievable clock period is {vectorized_d[left]}")
         return retiming
 
-    def opt1_algorithm(self, desired_clock):
+    def opt1_algorithm(self, draw=True):
 
         # 1) Compute W and D using algorithm WD
         w_mat, d_mat = self.wd_algorithm()
@@ -182,23 +180,29 @@ class RetimingGraph:
         vectorized_d = np.unique(np.sort(d_mat.flatten()))
 
         # 3) Binary search among the elements of D for the minimum available clock period, chek correctness with feas
-        retiming = self._opt2_binary_search(vectorized_d, w_mat, d_mat)
+        retiming = self._opt1_binary_search(vectorized_d, w_mat, d_mat)
+
+        G_r = self.compute_retimed_graph(retiming)
+
+        if draw:
+            self.draw_graph(G_r)
+
+        return G_r
 
     def feas_algorithm(self, desired_clock):
         retiming = {n: 0 for n in self.graph.nodes}
         for _ in range(len(self.graph.nodes) - 1):
             G_r = self.compute_retimed_graph(retiming)
-            #TODO check bug here
             delta = self.cp_algorithm(G_r, "delta")
             for v, delta_v in delta.items():
                 if delta_v > desired_clock:
                     retiming[v] += 1
 
         if self.cp_algorithm(G_r) > desired_clock:
-            print("No feasible retiming exists")
+            print(f"No feasible retiming exists for clock period {desired_clock}")
             return None
         else:
-            print("Feasible retiming exists", retiming)
+            print(f"Feasible retiming exists with clock period {desired_clock}", retiming)
             return retiming
 
     def _opt2_binary_search(self, vectorized_d):
@@ -242,6 +246,21 @@ if __name__ == "__main__":
     # g.draw_graph()
     # g.cp_algorithm()
     # g.compute_retimed_graph({0: 0, 1: -1, 2: -1, 3: -2, 4: -2, 5: -2, 6: -1, 7: 0}, draw=True)
-    g.feas_algorithm(13)
+    # g.feas_algorithm(13)
     # g.opt2_algorithm()
 
+    # retiming = dict(nx.all_pairs_bellman_ford_path_length(g.graph, "d(u)"))
+    # print(retiming)
+    # g.opt1_algorithm(draw=True)
+    # w_mat, d_mat = g.wd_algorithm()
+    # print(g.check_legal_retiming(12, w_mat, d_mat))
+    v = [0, 1, 2, 3]
+    d = [0, 3, 3, 7]
+    e = [[0, 1], [1, 2], [1, 3], [2, 3], [3, 0]]
+    w = [2, 0, 0, 0, 0]
+    g = RetimingGraph(v, e, d, w)
+    g.opt1_algorithm(draw=True)
+
+    # g.draw_graph(g.graph)
+    # w_mat, d_mat = g.wd_algorithm()
+    # print(g.check_legal_retiming(7, w_mat, d_mat))

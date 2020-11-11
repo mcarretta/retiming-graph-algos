@@ -35,13 +35,13 @@ if __name__ == "__main__":
     parser.add_argument('--nodes_list', default=[4, 10, 15, 20, 25, 30], nargs='+', type=int,
                         help="List of random graph number of nodes to run tests")
 
-    parser.add_argument("--weights", default="random", type=str, help="Set weights, random or positive")
+    parser.add_argument("--weights", default="positive", type=str, help="Set weights, random or positive")
     parser.add_argument("--cycle_check", action='store_true', help="Check for positive cycles")
     parser.add_argument("--n_tests", default=1, type=int,
                         help="How many tests for random OPT1 and OPT2 algorithms testing")
 
     parser.add_argument("--n_nodes", default=20, type=int, help="Number of random nodes for a random graph")
-    parser.add_argument("--edge_prob", default=0.6, type=int, help="Set edge probability for a random graph")
+    parser.add_argument("--edge_prob", default=0.6, type=float, help="Set edge probability for a random graph")
 
     # General test variables
     parser.add_argument("--verbose", action='store_true', help="Set verbosity to true")

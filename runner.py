@@ -54,6 +54,9 @@ if __name__ == "__main__":
     else:
         cycle_check = args.cycle_check
     # Graph correctness testing
+    if args.paper_test_opt:
+        test_opt1_2(verbose=args.verbose, draw=args.draw)
+
     if args.random_wd:
         g = RetimingGraphRandom(n_vertices=args.n_nodes, edge_probability=args.edge_prob, weights=args.weights,
                                 verbose=args.verbose)

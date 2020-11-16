@@ -11,6 +11,10 @@ if __name__ == "__main__":
     # Correctness test parsers
     parser.add_argument("--paper_test_opt", action='store_true',
                         help="Test OPT1 and OPT2 algorithms on paper and slides graph")
+    parser.add_argument("--paper_test_cp", action='store_true',
+                        help="Test CP algorithms on paper and slides graph")
+    parser.add_argument("--paper_test_delta_array", action='store_true',
+                        help="Test delta array computation on paper and slides graph")
     parser.add_argument("--random_test_opt12", action='store_true',
                         help="Test OPT1 and OPT2 algorithms on a list of random graphs")
     parser.add_argument("--random_opt1", action='store_true', help="Test OPT1 algorithm on a random graph")
@@ -56,7 +60,10 @@ if __name__ == "__main__":
     # Graph correctness testing
     if args.paper_test_opt:
         test_opt1_2(verbose=args.verbose, draw=args.draw)
-
+    if args.paper_test_cp:
+        test_cp()
+    if args.paper_test_delta_array:
+        test_delta_array()
     if args.random_wd:
         g = RetimingGraphRandom(n_vertices=args.n_nodes, edge_probability=args.edge_prob, weights=args.weights,
                                 verbose=args.verbose)
@@ -117,3 +124,4 @@ if __name__ == "__main__":
         multiple_memory_random_opt2(node_list=args.nodes_list, weights=args.weights,
                                     positive_cycle_check=cycle_check,
                                     verbose=args.verbose, plot=args.plot_performance)
+

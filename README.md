@@ -25,6 +25,9 @@ runner.py provides a set of terminal arguments to access and showcase all the di
 optional arguments:
   -h, --help            show this help message and exit
   --paper_test_opt      Test OPT1 and OPT2 algorithms on paper and slides graph
+  --paper_test_cp       Test CP algorithms on paper and slides graph
+  --paper_test_delta_array
+                        Test delta array computation on paper and slides graph
   --random_test_opt12   Test OPT1 and OPT2 algorithms on a list of random graphs
   --random_opt1         Test OPT1 algorithm on a random graph
   --random_opt2         Test OPT2 algorithm on a random graph

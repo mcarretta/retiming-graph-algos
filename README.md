@@ -2,7 +2,7 @@
 
 Implementation of algorithms WD, OPT1, OPT2, CP from [Leierson - Saxe retiming paper](https://cseweb.ucsd.edu/classes/sp17/cse140-a/exam/LeisersonRetiming.pdf)
 
-You can find the slides of this project at this [link](https://docs.google.com/presentation/d/18XoahbEkRsyzuv5lwZE8kydG6DEL4P2di1DwdYzL58g/edit?usp=sharing)
+You can find the slides of this project at this [link](https://docs.google.com/presentation/d/18XoahbEkRsyzuv5lwZE8kydG6DEL4P2di1DwdYzL58g/edit?usp=sharing), where you can read more about implementation details, complexity of the algorithms implemented, benchmarks and testing cases. 
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the requirements.
